@@ -28,3 +28,4 @@ public class Privilege extends BaseEntity {
         this.description = description;
     }
 }
+
