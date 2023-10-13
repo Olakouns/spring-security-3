@@ -2,6 +2,7 @@ package io.kouns.demospringsecurity3.services.impl;
 
 import io.kouns.demospringsecurity3.dto.JwtAuthenticationResponse;
 import io.kouns.demospringsecurity3.dto.LoginRequest;
+import io.kouns.demospringsecurity3.repositories.UserRepository;
 import io.kouns.demospringsecurity3.security.TokenProvider;
 import io.kouns.demospringsecurity3.services.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final UserRepository userRepository;
 
-    public AuthServiceImpl(TokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+
+    public AuthServiceImpl(TokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
 
@@ -42,5 +46,10 @@ public class AuthServiceImpl implements AuthService {
 
         JwtAuthenticationResponse token = tokenProvider.generateToken(authentication);
         return ResponseEntity.ok(token);
+    }
+
+    @Override
+    public ResponseEntity<?> getUser() {
+        return ResponseEntity.ok(userRepository.findAll());
     }
 }
