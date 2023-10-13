@@ -11,12 +11,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@SQLDelete(sql =
-        "UPDATE {table} " +
-                "SET deleted = true " +
-                "WHERE id = ?")
-@Table(name = "{table}")
+@SQLDelete(sql = "UPDATE {tableName} SET deleted = true WHERE id = ?")
+@Table(name = "{tableName}")
 @Where(clause = "deleted = false")
 public @interface JpaEntity {
-    String table();
+    String tableName();
 }
