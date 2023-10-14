@@ -17,9 +17,9 @@ public class OpenApiConfig {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info().title("REST API FOR BACKEND.")
-                        .description("This page show all ressources that you could handle to communicate with database via REST API.")
+                        .description("This page show all resources that you could handle to communicate with database via REST API.")
                         .version("v0.0.1")
-                        .license(new License().name("Apache 2.0").url("http://springdoc.org")))
+                        .license(new License().name("Apache 2.0").url("https://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
                         .description("SpringShop Wiki Documentation")
                         .url("https://springshop.wiki.github.org/docs"))

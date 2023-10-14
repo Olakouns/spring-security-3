@@ -12,12 +12,7 @@ import java.util.Collection;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "roles")
-@SQLDelete(sql =
-        "UPDATE roles " +
-                "SET deleted = true " +
-                "WHERE id = ?")
-@Where(clause = "deleted = false")
+@JpaEntity(tableName = "roles")
 @Data
 public class Role extends BaseEntity {
 
