@@ -20,14 +20,10 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users")
-@SQLDelete(sql =
-        "UPDATE users " +
-                "SET deleted = true " +
-                "WHERE id = ?")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 @Data
 public class User extends BaseEntity {
-
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")

@@ -73,5 +73,18 @@ public class DataLoadConfig {
         user.setRole(roleAdmin);
         user.setUserType(UserType.DASHBOARD_USER);
         userRepository.save(user);
+
+
+
+        User user2 = new User();
+        user2.setEmail("registerEmail@gmail.com");
+        user2.setUsername(registerFirstName);
+        user2.setFirstname(registerFirstName);
+        user2.setLastname(registerLastName);
+        user2.setPassword(this.passwordEncoder.encode(password));
+        user2.setRole(roleAdmin);
+        user2.setDeleted(true);
+        user2.setUserType(UserType.DASHBOARD_USER);
+        userRepository.save(user2);
     }
 }

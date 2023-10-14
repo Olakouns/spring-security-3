@@ -9,7 +9,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 @Entity
-@JpaEntity(tableName = "privileges")
+@Table(name = "privileges")
+@SQLDelete(sql = "UPDATE privileges SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
