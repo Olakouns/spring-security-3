@@ -2,9 +2,11 @@ package io.kouns.demospringsecurity3.security;
 
 
 import io.kouns.demospringsecurity3.entities.User;
+import io.kouns.demospringsecurity3.exceptions.NoAuthorizationException;
 import io.kouns.demospringsecurity3.exceptions.ResourceNotFoundException;
 import io.kouns.demospringsecurity3.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserById(String id) throws ResourceNotFoundException {
 
         User user = userRepository.findById(UUID.fromString(id)).orElseThrow(
-                () -> new ResourceNotFoundException("User", "id", id)
+                () -> new BadCredentialsException("Not authorized to access this resource")
         );
         return UserPrincipal.create(user);
     }
