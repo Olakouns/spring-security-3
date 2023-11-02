@@ -3,12 +3,11 @@ package io.kouns.demospringsecurity3.config;
 import io.kouns.demospringsecurity3.security.CustomUserDetailsService;
 import io.kouns.demospringsecurity3.security.JwtAuthenticationEntryPoint;
 import io.kouns.demospringsecurity3.security.JwtAuthenticationFilter;
-import org.h2.security.auth.H2AuthConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -34,8 +33,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @Configuration
 @EnableWebSecurity
@@ -111,21 +108,34 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
+
     @Bean
+    @Order(2)
+    public SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher(AntPathRequestMatcher.antMatcher("/h2-console/**"))
+                .authorizeHttpRequests( auth -> {
+                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll();
+                })
+                .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .build();
+    }
+
+    @Bean
+    @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
 
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
         http
+                .securityMatcher(AntPathRequestMatcher.antMatcher("/api/**"))
                 .cors(AbstractHttpConfigurer::disable)
-//                .csrf(AbstractHttpConfigurer::disable)
-                .csrf(csrfConfigurer -> csrfConfigurer.ignoringRequestMatchers(mvcMatcherBuilder.pattern("/api/**"), PathRequest.toH2Console()).disable())
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                                 auth
-                                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                                         .requestMatchers(mvcMatcherBuilder.pattern("/api/auth/login"), mvcMatcherBuilder.pattern("/api/auth/register"))
                                         .permitAll()
                                         .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/medias"))
